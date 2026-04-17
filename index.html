@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -96,26 +95,34 @@
     font-size: 12px;
   }
 
+  /* ✅ 關鍵：控制列對齊修正 */
   .control {
     display: flex;
     align-items: center;
-    gap: 4px;
+    justify-content: center;
+    gap: 6px;
+    height: 32px;
   }
 
   .control button {
-    width: 26px;
-    height: 26px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     border: none;
     background: #bbdefb;
     font-size: 16px;
+    line-height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
   }
 
   .value {
     width: 22px;
     text-align: center;
-    font-size: 13px;
+    font-size: 14px;
+    line-height: 32px;
   }
 
   .total {
@@ -137,7 +144,7 @@
 <div class="grid" id="grid"></div>
 
 <script>
-/* 球員資料（背號＋綽號） */
+/* 球員資料 */
 const players = [
   { name: "Aaron", number: 31, nickname: "幹話王" },
   { name: "FuShiung", number: 17, nickname: "雄董" },
@@ -145,7 +152,7 @@ const players = [
   { name: "Charlie", number: 6, nickname: "查哥" },
   { name: "Ray H", number: 90, nickname: "小鑫鑫" },
   { name: "Ray C", number: 20, nickname: "黃金游擊" },
-  { name: "Kelvin", number: 88, nickname: "攝影王" },
+  { name: "Kelvin", number: 88, nickname: "攝影大哥" },
   { name: "Wallace", number: 15, nickname: "瓦哥" },
   { name: "Ben", number: 9, nickname: "年輕人" },
   { name: "Denny", number: 2, nickname: "王大哥" },
@@ -153,10 +160,10 @@ const players = [
   { name: "Benson", number: 86, nickname: "班森" }
 ];
 
-/* 規則定義 */
+/* 事件規則（文字已修正） */
 const events = [
-  { name: "出局", self: 3, aaron: 0 },
-  { name: "三振", self: 3, aaron: 0 },
+  { name: "一球出局", self: 3, aaron: 0 },
+  { name: "兩球三振", self: 3, aaron: 0 },
   { name: "失誤", self: 1, aaron: 0 },
   { name: "保送", self: 0, aaron: 1 },
   { name: "一安", self: 0, aaron: 1 },
