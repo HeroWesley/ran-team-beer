@@ -17,27 +17,65 @@
   h1 {
     text-align: center;
     font-size: 20px;
-    margin: 6px 0 10px;
+    margin: 8px 0 12px;
   }
 
   .grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 6px;
+    gap: 8px;
   }
 
   .card {
-    background: #fff;
-    border-radius: 12px;
-    padding: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+    position: relative;
+    background: linear-gradient(135deg, #ffffff, #f9f9f9);
+    border-radius: 14px;
+    padding: 10px 8px 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,.12);
     font-size: 12px;
   }
 
+  .card.captain-card {
+    border: 2px solid #d32f2f;
+  }
+
+  /* 背號 */
+  .number {
+    position: absolute;
+    top: -6px;
+    left: -6px;
+    background: #1976d2;
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,.25);
+  }
+
+  /* 隊長標誌 */
+  .captain {
+    position: absolute;
+    top: -14px;
+    right: -10px;
+    background: #d32f2f;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 6px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.25);
+  }
+
   .name {
-    font-weight: bold;
     text-align: center;
+    font-weight: 700;
     margin-bottom: 6px;
+    font-size: 14px;
   }
 
   .row {
@@ -68,7 +106,7 @@
   }
 
   .value {
-    width: 20px;
+    width: 22px;
     text-align: center;
     font-size: 13px;
   }
@@ -77,10 +115,10 @@
     margin-top: 6px;
     text-align: center;
     background: #fff3cd;
-    border-radius: 8px;
-    font-size: 14px;
+    border-radius: 10px;
+    font-size: 15px;
     font-weight: bold;
-    padding: 4px;
+    padding: 6px;
   }
 </style>
 </head>
@@ -92,13 +130,22 @@
 <div class="grid" id="grid"></div>
 
 <script>
+/* 球員與背號（依你指定） */
 const players = [
-  "Aaron","Fushuing","Kevin","Charlie",
-  "Ray H","Ray C","Kelvin","Wallace",
-  "Benson","Denny","Ben","Wesley"
+  { name: "Aaron", number: 31 },
+  { name: "FuShiung", number: 17 },
+  { name: "Kevin", number: 21 },
+  { name: "Charlie", number: 6 },
+  { name: "Ray H", number: 90 },
+  { name: "Ray C", number: 20 },
+  { name: "Kelvin", number: 88 },
+  { name: "Wallace", number: 15 },
+  { name: "Ben", number: 9 },
+  { name: "Denny", number: 2 },
+  { name: "Wesley", number: 87 }
 ];
 
-// 事件定義
+/* 規則定義 */
 const events = [
   { name: "出局", self: 3, aaron: 0 },
   { name: "三振", self: 3, aaron: 0 },
@@ -113,32 +160,35 @@ const events = [
 
 const grid = document.getElementById("grid");
 
-// 建立卡片
-players.forEach((name, p) => {
+/* 建立卡片 */
+players.forEach((p, pi) hooking => {
   const card = document.createElement("div");
-  card.className = "card";
+  card.className = p.name === "Aaron" ? "card captain-card" : "card";
 
-  let rows = events.map((e, i) => `
+  const rows = events.map((e, ei) => `
     <div class="row">
       <div class="label">${e.name}</div>
       <div class="control">
-        <button onclick="chg(${p},${i},-1)">➖</button>
-        <div class="value" id="v-${p}-${i}">0</div>
-        <button onclick="chg(${p},${i},1)">➕</button>
+        <button onclick="chg(${pi},${ei},-1)">➖</button>
+        <div class="value" id="v-${pi}-${ei}">0</div>
+        <button onclick="chg(${pi},${ei},1)">➕</button>
       </div>
     </div>
   `).join("");
 
   card.innerHTML = `
-    <div class="name">${name}</div>
+    <div class="number">#${p.number}</div>
+    ${p.name === "Aaron" ? `<div class="captain">👑 隊長</div>` : ""}
+    <div class="name">${p.name}</div>
     ${rows}
-    <div class="total" id="t-${p}">🍺 0 杯</div>
+    <div class="total" id="t-${pi}">🍺 0 杯</div>
   `;
+
   grid.appendChild(card);
 });
 
-function chg(p, i, d) {
-  const el = document.getElementById(`v-${p}-${i}`);
+function chg(pi, ei, d) {
+  const el = document.getElementById(`v-${pi}-${ei}`);
   let v = Number(el.textContent);
   v = Math.max(0, v + d);
   el.textContent = v;
@@ -148,28 +198,27 @@ function chg(p, i, d) {
 function calc() {
   let aaronExtra = 0;
 
-  // 先算全隊造成 Aaron 的杯數
-  players.forEach((_, p) => {
-    events.forEach((e, i) => {
-      const v = Number(document.getElementById(`v-${p}-${i}`).textContent);
+  /* 全隊加在 Aaron 的杯數 */
+  players.forEach((_, pi) => {
+    events.forEach((e, ei) => {
+      const v = Number(document.getElementById(`v-${pi}-${ei}`).textContent);
       aaronExtra += v * e.aaron;
     });
   });
 
-  // 再更新每個人顯示的杯數
-  players.forEach((name, p) => {
+  /* 更新每一張卡片 */
+  players.forEach((p, pi) => {
     let selfDrink = 0;
-
-    events.forEach((e, i) => {
-      const v = Number(document.getElementById(`v-${p}-${i}`).textContent);
+    events.forEach((e, ei) => {
+      const v = Number(document.getElementById(`v-${pi}-${ei}`).textContent);
       selfDrink += v * e.self;
     });
 
-    const total = (name === "Aaron")
+    const total = p.name === "Aaron"
       ? selfDrink + aaronExtra
       : selfDrink;
 
-    document.getElementById(`t-${p}`).textContent = `🍺 ${total} 杯`;
+    document.getElementById(`t-${pi}`).textContent = `🍺 ${total} 杯`;
   });
 }
 </script>
