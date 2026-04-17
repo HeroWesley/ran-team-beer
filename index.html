@@ -53,7 +53,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 6px rgba(0,0,0,.25);
   }
 
   .captain {
@@ -66,7 +65,6 @@
     font-weight: 700;
     padding: 4px 6px;
     border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,.25);
   }
 
   .name {
@@ -91,14 +89,9 @@
     margin-bottom: 4px;
   }
 
-  .label {
-    font-size: 12px;
-  }
-
   .control {
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: 6px;
     height: 32px;
   }
@@ -110,10 +103,6 @@
     border: none;
     background: #bbdefb;
     font-size: 16px;
-    line-height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     cursor: pointer;
   }
 
@@ -134,34 +123,30 @@
     padding: 6px;
   }
 
-  /* ===== 全壘打特效 ===== */
-  #homerun {
+  /* 🎇 彩蛋字幕 */
+  #easterEgg {
     position: fixed;
     inset: 0;
     display: none;
     align-items: center;
     justify-content: center;
-    background: rgba(0,0,0,.5);
+    background: rgba(0,0,0,.55);
     z-index: 999;
-    pointer-events: none;
-  }
-
-  #homerun.show {
-    display: flex;
-  }
-
-  #homerun .text {
-    font-size: 40px;
+    font-size: 26px;
     font-weight: 900;
     color: #ffeb3b;
-    text-shadow: 0 4px 12px #000;
-    animation: pop 0.8s ease forwards;
+    text-align: center;
+  }
+
+  #easterEgg.show {
+    display: flex;
+    animation: pop 1.2s ease;
   }
 
   @keyframes pop {
-    0% { transform: scale(0.5); opacity: 0; }
+    0% { transform: scale(.5); opacity: 0; }
     60% { transform: scale(1.3); opacity: 1; }
-    100% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(1); }
   }
 </style>
 </head>
@@ -169,13 +154,9 @@
 <body>
 
 <h1>RAN Team全員都開轟! 棒棒擊沉NPO!</h1>
-
 <div class="grid" id="grid"></div>
 
-<!-- 全壘打特效容器 -->
-<div id="homerun">
-  <div class="text">💥⚾ 全壘打！！ 🍺🔥</div>
-</div>
+<div id="easterEgg">🍻 鴛鴦雙飛<br>王大哥陪你喝 🍻</div>
 
 <script>
 const players = [
@@ -185,7 +166,7 @@ const players = [
   { name: "Charlie", number: 6, nickname: "查哥" },
   { name: "Ray H", number: 90, nickname: "小鑫鑫" },
   { name: "Ray C", number: 20, nickname: "黃金游擊" },
-  { name: "Kelvin", number: 88, nickname: "攝影大哥" },
+  { name: "Kelvin", number: 88, nickname: "攝影王" },
   { name: "Wallace", number: 15, nickname: "瓦哥" },
   { name: "Ben", number: 9, nickname: "年輕人" },
   { name: "Denny", number: 2, nickname: "王大哥" },
@@ -206,7 +187,8 @@ const events = [
 ];
 
 const grid = document.getElementById("grid");
-const hrEffect = document.getElementById("homerun");
+const egg = document.getElementById("easterEgg");
+const bonus = {}; // 額外修正杯數用
 
 players.forEach((p, pi) => {
   const card = document.createElement("div");
@@ -214,7 +196,7 @@ players.forEach((p, pi) => {
 
   const rows = events.map((e, ei) => `
     <div class="row">
-      <div class="label">${e.name}</div>
+      <div>${e.name}</div>
       <div class="control">
         <button onclick="chg(${pi},${ei},-1)">➖</button>
         <div class="value" id="v-${pi}-${ei}">0</div>
@@ -234,19 +216,24 @@ players.forEach((p, pi) => {
   grid.appendChild(card);
 });
 
-function showHomerun() {
-  hrEffect.classList.add("show");
-  setTimeout(() => hrEffect.classList.remove("show"), 1000);
+function showEgg() {
+  egg.classList.add("show");
+  setTimeout(() => egg.classList.remove("show"), 1200);
 }
 
 function chg(pi, ei, d) {
   const el = document.getElementById(`v-${pi}-${ei}`);
-  let v = Number(el.textContent);
-  const newVal = Math.max(0, v + d);
-  if (events[ei].name === "全壘" && d === 1) {
-    showHomerun();
+  const v = Number(el.textContent);
+  const next = Math.max(0, v + d);
+  el.textContent = next;
+
+  // 🎁 彩蛋條件：Aaron + 全壘 + 增加
+  if (players[pi].name === "Aaron" && events[ei].name === "全壘" && d === 1) {
+    showEgg();
+    bonus["Aaron"] = (bonus["Aaron"] || 0) - 2;
+    bonus["Denny"] = (bonus["Denny"] || 0) + 2;
   }
-  el.textContent = newVal;
+
   calc();
 }
 
@@ -266,9 +253,9 @@ function calc() {
       const v = Number(document.getElementById(`v-${pi}-${ei}`).textContent);
       selfDrink += v * e.self;
     });
-    const total = p.name === "Aaron"
-      ? selfDrink + aaronExtra
-      : selfDrink;
+
+    let total = p.name === "Aaron" ? selfDrink + aaronExtra : selfDrink;
+    total += bonus[p.name] || 0;
     document.getElementById(`t-${pi}`).textContent = `🍺 ${total} 杯`;
   });
 }
@@ -276,4 +263,3 @@ function calc() {
 
 </body>
 </html>
-``
