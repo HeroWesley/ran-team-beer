@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="google" content="notranslate">
+<title>RAN Team全員都開轟! 棒棒擊沉NPO!</title>
+
+<style>
+  body {
+    font-family: "Noto Sans TC", system-ui;
+    background: #f1f8e9;
+    margin: 0;
+    padding: 8px;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 20px;
+    margin: 6px 0 10px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+    font-size: 12px;
+  }
+
+  .name {
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 6px;
+  }
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+  }
+
+  .label {
+    font-size: 12px;
+  }
+
+  .control {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .control button {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: none;
+    background: #bbdefb;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .value {
+    width: 20px;
+    text-align: center;
+    font-size: 13px;
+  }
+
+  .total {
+    margin-top: 6px;
+    text-align: center;
+    background: #fff3cd;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 4px;
+  }
+</style>
+</head>
+
+<body>
+
+<h1>RAN Team全員都開轟! 棒棒擊沉NPO!</h1>
+
+<div class="grid" id="grid"></div>
+
+<script>
+const players = [
+  "Aaron","Fushuing","Kevin","Charlie",
+  "Ray H","Ray C","Kelvin","Wallace",
+  "Benson","Denny","Ben","Wesley"
+];
+
+// 事件定義
+const events = [
+  { name: "出局", self: 3, aaron: 0 },
+  { name: "三振", self: 3, aaron: 0 },
+  { name: "失誤", self: 1, aaron: 0 },
+  { name: "保送", self: 0, aaron: 1 },
+  { name: "一安", self: 0, aaron: 1 },
+  { name: "二安", self: 0, aaron: 2 },
+  { name: "三安", self: 0, aaron: 3 },
+  { name: "全壘", self: 0, aaron: 4 },
+  { name: "打點", self: 0, aaron: 1 }
+];
+
+const grid = document.getElementById("grid");
+
+// 建立卡片
+players.forEach((name, p) => {
+  const card = document.createElement("div");
+  card.className = "card";
+
+  let rows = events.map((e, i) => `
+    <div class="row">
+      <div class="label">${e.name}</div>
+      <div class="control">
+        <button onclick="chg(${p},${i},-1)">➖</button>
+        <div class="value" id="v-${p}-${i}">0</div>
+        <button onclick="chg(${p},${i},1)">➕</button>
+      </div>
+    </div>
+  `).join("");
+
+  card.innerHTML = `
+    <div class="name">${name}</div>
+    ${rows}
+    <div class="total" id="t-${p}">🍺 0 杯</div>
+  `;
+  grid.appendChild(card);
+});
+
+function chg(p, i, d) {
+  const el = document.getElementById(`v-${p}-${i}`);
+  let v = Number(el.textContent);
+  v = Math.max(0, v + d);
+  el.textContent = v;
+  calc();
+}
+
+function calc() {
+  let aaronExtra = 0;
+
+  // 先算全隊造成 Aaron 的杯數
+  players.forEach((_, p) => {
+    events.forEach((e, i) => {
+      const v = Number(document.getElementById(`v-${p}-${i}`).textContent);
+      aaronExtra += v * e.aaron;
+    });
+  });
+
+  // 再更新每個人顯示的杯數
+  players.forEach((name, p) => {
+    let selfDrink = 0;
+
+    events.forEach((e, i) => {
+      const v = Number(document.getElementById(`v-${p}-${i}`).textContent);
+      selfDrink += v * e.self;
+    });
+
+    const total = (name === "Aaron")
+      ? selfDrink + aaronExtra
+      : selfDrink;
+
+    document.getElementById(`t-${p}`).textContent = `🍺 ${total} 杯`;
+  });
+}
+</script>
+
+</body>
+</html>
