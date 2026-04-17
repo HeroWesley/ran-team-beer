@@ -71,7 +71,6 @@
     text-align: center;
     font-weight: 700;
     font-size: 14px;
-    margin-bottom: 2px;
   }
 
   .nickname {
@@ -123,25 +122,40 @@
     padding: 6px;
   }
 
-  /* 🎇 彩蛋字幕 */
-  #easterEgg {
+  /* 全壘打動畫 */
+  #homerun {
     position: fixed;
     inset: 0;
     display: none;
     align-items: center;
     justify-content: center;
-    background: rgba(0,0,0,.55);
+    background: rgba(0,0,0,.5);
+    z-index: 998;
+    pointer-events: none;
+  }
+  #homerun.show { display: flex; }
+  #homerun span {
+    font-size: 40px;
+    font-weight: 900;
+    color: #ffeb3b;
+    animation: pop .8s ease;
+  }
+
+  /* Aaron 彩蛋 */
+  #egg {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,.6);
     z-index: 999;
     font-size: 26px;
     font-weight: 900;
     color: #ffeb3b;
     text-align: center;
   }
-
-  #easterEgg.show {
-    display: flex;
-    animation: pop 1.2s ease;
-  }
+  #egg.show { display: flex; animation: pop 1.2s ease; }
 
   @keyframes pop {
     0% { transform: scale(.5); opacity: 0; }
@@ -156,7 +170,8 @@
 <h1>RAN Team全員都開轟! 棒棒擊沉NPO!</h1>
 <div class="grid" id="grid"></div>
 
-<div id="easterEgg">🍻 鴛鴦雙飛<br>王大哥陪你喝 🍻</div>
+<div id="homerun"><span>💥⚾ 全壘打！！ 🍺🔥</span></div>
+<div id="egg">🍻 鴛鴦雙飛<br>王大哥陪你喝 🍻<br>王大哥承擔兩杯酒</div>
 
 <script>
 const players = [
@@ -175,20 +190,21 @@ const players = [
 ];
 
 const events = [
-  { name: "一球出局", self: 3, aaron: 0 },
-  { name: "兩球三振", self: 3, aaron: 0 },
-  { name: "失誤", self: 1, aaron: 0 },
-  { name: "保送", self: 0, aaron: 1 },
-  { name: "一安", self: 0, aaron: 1 },
-  { name: "二安", self: 0, aaron: 2 },
-  { name: "三安", self: 0, aaron: 3 },
-  { name: "全壘", self: 0, aaron: 4 },
-  { name: "打點", self: 0, aaron: 1 }
+  { name: "一球出局", type: "self", value: 3 },
+  { name: "兩球三振", type: "self", value: 3 },
+  { name: "失誤", type: "self-error", value: 1 },
+  { name: "保送", type: "aaron", value: 1 },
+  { name: "一安", type: "aaron", value: 1 },
+  { name: "二安", type: "aaron", value: 2 },
+  { name: "三安", type: "aaron", value: 3 },
+  { name: "全壘", type: "aaron", value: 4 },
+  { name: "打點", type: "aaron", value: 1 }
 ];
 
 const grid = document.getElementById("grid");
-const egg = document.getElementById("easterEgg");
-const bonus = {}; // 額外修正杯數用
+const hr = document.getElementById("homerun");
+const egg = document.getElementById("egg");
+const bonus = {};
 
 players.forEach((p, pi) => {
   const card = document.createElement("div");
@@ -207,56 +223,56 @@ players.forEach((p, pi) => {
 
   card.innerHTML = `
     <div class="number">#${p.number}</div>
-    ${p.name === "Aaron" ? `<div class="captain">👑 隊長</div>` : ""}
+    ${p.name==="Aaron"?'<div class="captain">👑 隊長</div>':''}
     <div class="name">${p.name}</div>
     <div class="nickname">「${p.nickname}」</div>
     ${rows}
     <div class="total" id="t-${pi}">🍺 0 杯</div>
   `;
+
   grid.appendChild(card);
 });
 
-function showEgg() {
+function showHR(){
+  hr.classList.add("show");
+  setTimeout(()=>hr.classList.remove("show"),800);
+}
+function showEgg(){
   egg.classList.add("show");
-  setTimeout(() => egg.classList.remove("show"), 1200);
+  setTimeout(()=>egg.classList.remove("show"),1200);
 }
 
-function chg(pi, ei, d) {
+function chg(pi, ei, d){
   const el = document.getElementById(`v-${pi}-${ei}`);
-  const v = Number(el.textContent);
-  const next = Math.max(0, v + d);
-  el.textContent = next;
+  const cur = Number(el.textContent);
+  const next = Math.max(0,cur+d);
+  const inc = d===1 && next>cur;
 
-  // 🎁 彩蛋條件：Aaron + 全壘 + 增加
-  if (players[pi].name === "Aaron" && events[ei].name === "全壘" && d === 1) {
-    showEgg();
-    bonus["Aaron"] = (bonus["Aaron"] || 0) - 2;
-    bonus["Denny"] = (bonus["Denny"] || 0) + 2;
+  if(events[ei].name==="全壘" && inc){
+    showHR();
+    if(players[pi].name==="Aaron"){
+      showEgg();
+      bonus.Aaron=(bonus.Aaron||0)-2;
+      bonus.Denny=(bonus.Denny||0)+2;
+    }
   }
-
+  el.textContent=next;
   calc();
 }
 
-function calc() {
-  let aaronExtra = 0;
-
-  players.forEach((_, pi) => {
-    events.forEach((e, ei) => {
-      const v = Number(document.getElementById(`v-${pi}-${ei}`).textContent);
-      aaronExtra += v * e.aaron;
+function calc(){
+  let aaronExtra=0;
+  players.forEach((p,pi)=>{
+    let self=0;
+    events.forEach((e,ei)=>{
+      const v=Number(document.getElementById(`v-${pi}-${ei}`).textContent);
+      if(e.type==="aaron") aaronExtra+=v*e.value;
+      if(e.type==="self") self+=v*e.value;
+      if(e.type==="self-error") self+=Math.max(0,v-2);
     });
-  });
-
-  players.forEach((p, pi) => {
-    let selfDrink = 0;
-    events.forEach((e, ei) => {
-      const v = Number(document.getElementById(`v-${pi}-${ei}`).textContent);
-      selfDrink += v * e.self;
-    });
-
-    let total = p.name === "Aaron" ? selfDrink + aaronExtra : selfDrink;
-    total += bonus[p.name] || 0;
-    document.getElementById(`t-${pi}`).textContent = `🍺 ${total} 杯`;
+    let total=p.name==="Aaron"?self+aaronExtra:self;
+    total+=(bonus[p.name]||0);
+    document.getElementById(`t-${pi}`).textContent=`🍺 ${total} 杯`;
   });
 }
 </script>
