@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -30,7 +31,7 @@
     position: relative;
     background: linear-gradient(135deg, #ffffff, #f9f9f9);
     border-radius: 14px;
-    padding: 10px 8px 8px;
+    padding: 12px 8px 8px;
     box-shadow: 0 4px 8px rgba(0,0,0,.12);
     font-size: 12px;
   }
@@ -72,8 +73,16 @@
   .name {
     text-align: center;
     font-weight: 700;
-    margin-bottom: 6px;
     font-size: 14px;
+    margin-bottom: 2px;
+  }
+
+  .nickname {
+    text-align: center;
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 6px;
+    font-style: italic;
   }
 
   .row {
@@ -128,20 +137,23 @@
 <div class="grid" id="grid"></div>
 
 <script>
+/* 球員資料（背號＋綽號） */
 const players = [
-  { name: "Aaron", number: 31 },
-  { name: "FuShiung", number: 17 },
-  { name: "Kevin", number: 21 },
-  { name: "Charlie", number: 6 },
-  { name: "Ray H", number: 90 },
-  { name: "Ray C", number: 20 },
-  { name: "Kelvin", number: 88 },
-  { name: "Wallace", number: 15 },
-  { name: "Ben", number: 9 },
-  { name: "Denny", number: 2 },
-  { name: "Wesley", number: 87 }
+  { name: "Aaron", number: 31, nickname: "幹話王" },
+  { name: "FuShiung", number: 17, nickname: "雄董" },
+  { name: "Kevin", number: 21, nickname: "黃領導" },
+  { name: "Charlie", number: 6, nickname: "查哥" },
+  { name: "Ray H", number: 90, nickname: "小鑫鑫" },
+  { name: "Ray C", number: 20, nickname: "黃金游擊" },
+  { name: "Kelvin", number: 88, nickname: "攝影王" },
+  { name: "Wallace", number: 15, nickname: "瓦哥" },
+  { name: "Ben", number: 9, nickname: "年輕人" },
+  { name: "Denny", number: 2, nickname: "王大哥" },
+  { name: "Wesley", number: 87, nickname: "衛斯理" },
+  { name: "Benson", number: 86, nickname: "班森" }
 ];
 
+/* 規則定義 */
 const events = [
   { name: "出局", self: 3, aaron: 0 },
   { name: "三振", self: 3, aaron: 0 },
@@ -156,7 +168,7 @@ const events = [
 
 const grid = document.getElementById("grid");
 
-/* ✅ 這裡是修正過的 forEach，沒有 hooking */
+/* 建立卡片 */
 players.forEach((p, pi) => {
   const card = document.createElement("div");
   card.className = p.name === "Aaron" ? "card captain-card" : "card";
@@ -176,6 +188,7 @@ players.forEach((p, pi) => {
     <div class="number">#${p.number}</div>
     ${p.name === "Aaron" ? `<div class="captain">👑 隊長</div>` : ""}
     <div class="name">${p.name}</div>
+    <div class="nickname">「${p.nickname}」</div>
     ${rows}
     <div class="total" id="t-${pi}">🍺 0 杯</div>
   `;
@@ -206,7 +219,9 @@ function calc() {
       const v = Number(document.getElementById(`v-${pi}-${ei}`).textContent);
       selfDrink += v * e.self;
     });
-    const total = p.name === "Aaron" ? selfDrink + aaronExtra : selfDrink;
+    const total = p.name === "Aaron"
+      ? selfDrink + aaronExtra
+      : selfDrink;
     document.getElementById(`t-${pi}`).textContent = `🍺 ${total} 杯`;
   });
 }
