@@ -39,7 +39,6 @@
     border: 2px solid #d32f2f;
   }
 
-  /* 背號 */
   .number {
     position: absolute;
     top: -6px;
@@ -57,7 +56,6 @@
     box-shadow: 0 2px 6px rgba(0,0,0,.25);
   }
 
-  /* 隊長標誌 */
   .captain {
     position: absolute;
     top: -14px;
@@ -130,7 +128,6 @@
 <div class="grid" id="grid"></div>
 
 <script>
-/* 球員與背號（依你指定） */
 const players = [
   { name: "Aaron", number: 31 },
   { name: "FuShiung", number: 17 },
@@ -145,7 +142,6 @@ const players = [
   { name: "Wesley", number: 87 }
 ];
 
-/* 規則定義 */
 const events = [
   { name: "出局", self: 3, aaron: 0 },
   { name: "三振", self: 3, aaron: 0 },
@@ -160,8 +156,8 @@ const events = [
 
 const grid = document.getElementById("grid");
 
-/* 建立卡片 */
-players.forEach((p, pi) hooking => {
+/* ✅ 這裡是修正過的 forEach，沒有 hooking */
+players.forEach((p, pi) => {
   const card = document.createElement("div");
   card.className = p.name === "Aaron" ? "card captain-card" : "card";
 
@@ -190,15 +186,13 @@ players.forEach((p, pi) hooking => {
 function chg(pi, ei, d) {
   const el = document.getElementById(`v-${pi}-${ei}`);
   let v = Number(el.textContent);
-  v = Math.max(0, v + d);
-  el.textContent = v;
+  el.textContent = Math.max(0, v + d);
   calc();
 }
 
 function calc() {
   let aaronExtra = 0;
 
-  /* 全隊加在 Aaron 的杯數 */
   players.forEach((_, pi) => {
     events.forEach((e, ei) => {
       const v = Number(document.getElementById(`v-${pi}-${ei}`).textContent);
@@ -206,18 +200,13 @@ function calc() {
     });
   });
 
-  /* 更新每一張卡片 */
   players.forEach((p, pi) => {
     let selfDrink = 0;
     events.forEach((e, ei) => {
       const v = Number(document.getElementById(`v-${pi}-${ei}`).textContent);
       selfDrink += v * e.self;
     });
-
-    const total = p.name === "Aaron"
-      ? selfDrink + aaronExtra
-      : selfDrink;
-
+    const total = p.name === "Aaron" ? selfDrink + aaronExtra : selfDrink;
     document.getElementById(`t-${pi}`).textContent = `🍺 ${total} 杯`;
   });
 }
