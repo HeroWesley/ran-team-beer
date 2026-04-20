@@ -28,7 +28,7 @@ h1 {
 
 .card {
   position: relative;
-  background: #ffffff;
+  background: #fff;
   border-radius: 14px;
   padding: 12px 8px 8px;
   box-shadow: 0 4px 8px rgba(0,0,0,.12);
@@ -118,7 +118,7 @@ h1 {
   font-weight: bold;
 }
 
-/* === 動畫 Overlay === */
+/* 動畫 overlay */
 .overlay {
   position: fixed;
   inset: 0;
@@ -141,7 +141,6 @@ h1 {
   font-size: 26px;
 }
 
-/* === 動畫定義 === */
 @keyframes pop {
   0%   { transform: scale(.5); opacity: 0; }
   60%  { transform: scale(1.3); opacity: 1; }
@@ -159,7 +158,7 @@ h1 {
 <div id="egg" class="overlay">🍻 鴛鴦雙飛<br>王大哥陪你喝 🍻</div>
 
 <script>
-/* ===== 球員 ===== */
+/* 玩家 */
 const players = [
   { name:"Aaron",   number:31, nickname:"幹話王" },
   { name:"FuShiung",number:17, nickname:"雄董" },
@@ -175,7 +174,7 @@ const players = [
   { name:"Benson",  number:86, nickname:"班森" }
 ];
 
-/* ===== 事件 ===== */
+/* 事件 */
 const events = [
   { name:"一球出局", type:"self",       value:3 },
   { name:"兩球三振", type:"self",       value:3 },
@@ -193,7 +192,7 @@ const hr  = document.getElementById("homerun");
 const egg = document.getElementById("egg");
 const bonus = {};
 
-/* ===== 建卡片 ===== */
+/* 建卡片 */
 players.forEach((p,pi)=>{
   const card=document.createElement("div");
   card.className=p.name==="Aaron"?"card captain-card":"card";
@@ -203,7 +202,6 @@ players.forEach((p,pi)=>{
     ${p.name==="Aaron"?'<div class="captain">👑 隊長</div>':''}
     <div class="name">${p.name}</div>
     <div class="nickname">「${p.nickname}」</div>
-
     ${events.map((e,ei)=>`
       <div class="row">
         <div>${e.name}</div>
@@ -214,73 +212,76 @@ players.forEach((p,pi)=>{
         </div>
       </div>
     `).join("")}
-
     <div class="total" id="t-${pi}">🍺 0 杯</div>
   `;
   grid.appendChild(card);
 });
 
-/* ===== 穩定動畫播放 ===== */
+/* 穩定動畫 */
 function playOverlay(el, duration){
-  el.style.display = "flex";
-  el.style.animation = "none";   // reset
-  el.offsetHeight;               // 強制 reflow
-  el.style.animation = "pop 1.8s ease"; // ✅ 動畫時長 1.8 秒
-
-  setTimeout(()=>{
-    el.style.display = "none";
-  }, duration);
+  el.style.display="flex";
+  el.style.animation="none";
+  el.offsetHeight;
+  el.style.animation="pop 1.8s ease";
+  setTimeout(()=>el.style.display="none", duration);
 }
 
-/* ===== 加減 ===== */
+/* 加減 */
 function chg(pi,ei,d){
-  const vEl=document.getElementById(`v-${pi}-${ei}`);
-  const cur=Number(vEl.textContent);
+  const el=document.getElementById(`v-${pi}-${ei}`);
+  const cur=Number(el.textContent);
   const next=Math.max(0,cur+d);
   const inc=(d===1 && next>cur);
 
   if(events[ei].name==="全壘" && inc){
-    playOverlay(hr, 1800); // ✅ 全壘動畫 1.8 秒
-
+    playOverlay(hr,1800);
     if(players[pi].name==="Aaron"){
-      playOverlay(egg, 2200); // ✅ 彩蛋動畫 2.2 秒
-      bonus.Aaron = (bonus.Aaron||0) - 2;
-      bonus.Denny = (bonus.Denny||0) + 2;
+      playOverlay(egg,2200);
+      bonus.Aaron=(bonus.Aaron||0)-2;
+      bonus.Denny=(bonus.Denny||0)+2;
     }
   }
 
-  vEl.textContent = next;
+  el.textContent=next;
   calc();
 }
 
-/* ===== 核心計算 ===== */
+/* ✅ 核心計算（含 Ray C 特例） */
 function calc(){
-  let aaronExtra = 0;
-
-  // 全隊對 Aaron 的事件
+  /* 全隊對 Aaron */
+  let aaronExtra=0;
   players.forEach((_,pi)=>{
     events.forEach((e,ei)=>{
       if(e.type==="aaron"){
         const v=Number(document.getElementById(`v-${pi}-${ei}`).textContent);
-        aaronExtra += v * e.value;
+        aaronExtra+=v*e.value;
       }
     });
   });
 
-  // 各自杯數
+  /* 各自杯數 */
   players.forEach((p,pi)=>{
-    let self = 0;
+    let self=0;
 
     events.forEach((e,ei)=>{
       const v=Number(document.getElementById(`v-${pi}-${ei}`).textContent);
-      if(e.type==="self") self += v * e.value;
-      if(e.type==="self-error") self += Math.max(0, v - 2) * e.value;
+      if(e.type==="self") self+=v*e.value;
+      if(e.type==="self-error") self+=Math.max(0,v-2)*e.value;
     });
 
-    let total = (p.name==="Aaron") ? self + aaronExtra : self;
-    total += (bonus[p.name] || 0);
+    /* ⭐ Ray C 安打特例 */
+    if(p.name==="Ray C"){
+      events.forEach((e,ei)=>{
+        if(["一安","二安","三安","全壘"].includes(e.name)){
+          const v=Number(document.getElementById(`v-${pi}-${ei}`).textContent);
+          self+=v*e.value;
+        }
+      });
+    }
 
-    document.getElementById(`t-${pi}`).textContent = `🍺 ${total} 杯`;
+    let total=(p.name==="Aaron")?self+aaronExtra:self;
+    total+=(bonus[p.name]||0);
+    document.getElementById(`t-${pi}`).textContent=`🍺 ${total} 杯`;
   });
 }
 </script>
