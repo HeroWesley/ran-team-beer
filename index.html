@@ -28,7 +28,7 @@ h1 {
 
 .card {
   position: relative;
-  background: #fff;
+  background: #ffffff;
   border-radius: 14px;
   padding: 12px 8px 8px;
   box-shadow: 0 4px 8px rgba(0,0,0,.12);
@@ -158,7 +158,7 @@ h1 {
 <div id="egg" class="overlay">🍻 鴛鴦雙飛<br>王大哥陪你喝 🍻</div>
 
 <script>
-/* 玩家 */
+/* 球員 */
 const players = [
   { name:"Aaron",   number:31, nickname:"幹話王" },
   { name:"FuShiung",number:17, nickname:"雄董" },
@@ -174,7 +174,7 @@ const players = [
   { name:"Benson",  number:86, nickname:"班森" }
 ];
 
-/* 事件 */
+/* 事件（✅ 新增「美技」） */
 const events = [
   { name:"一球出局", type:"self",       value:3 },
   { name:"兩球三振", type:"self",       value:3 },
@@ -184,7 +184,8 @@ const events = [
   { name:"二安",     type:"aaron",      value:2 },
   { name:"三安",     type:"aaron",      value:3 },
   { name:"全壘",     type:"aaron",      value:4 },
-  { name:"打點",     type:"aaron",      value:1 }
+  { name:"打點",     type:"aaron",      value:1 },
+  { name:"美技",     type:"aaron",      value:1 }   // ✅ 新事件
 ];
 
 const grid = document.getElementById("grid");
@@ -217,7 +218,7 @@ players.forEach((p,pi)=>{
   grid.appendChild(card);
 });
 
-/* 穩定動畫 */
+/* 動畫 */
 function playOverlay(el, duration){
   el.style.display="flex";
   el.style.animation="none";
@@ -246,7 +247,7 @@ function chg(pi,ei,d){
   calc();
 }
 
-/* ✅ 核心計算（含 Ray C 特例） */
+/* 核心計算（含 Ray C 特例） */
 function calc(){
   /* 全隊對 Aaron */
   let aaronExtra=0;
@@ -269,7 +270,7 @@ function calc(){
       if(e.type==="self-error") self+=Math.max(0,v-2)*e.value;
     });
 
-    /* ⭐ Ray C 安打特例 */
+    /* Ray C 安打特例 */
     if(p.name==="Ray C"){
       events.forEach((e,ei)=>{
         if(["一安","二安","三安","全壘"].includes(e.name)){
