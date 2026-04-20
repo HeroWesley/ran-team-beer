@@ -7,161 +7,146 @@
 <title>RAN Team全員都開轟! 棒棒擊沉NPO!</title>
 
 <style>
-  body {
-    font-family: "Noto Sans TC", system-ui;
-    background: #f1f8e9;
-    margin: 0;
-    padding: 8px;
-  }
+body {
+  font-family: "Noto Sans TC", system-ui;
+  background: #f1f8e9;
+  margin: 0;
+  padding: 8px;
+}
 
-  h1 {
-    text-align: center;
-    font-size: 20px;
-    margin: 8px 0 12px;
-  }
+h1 {
+  text-align: center;
+  font-size: 20px;
+  margin: 8px 0 12px;
+}
 
-  .grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
 
-  .card {
-    position: relative;
-    background: linear-gradient(135deg, #ffffff, #f9f9f9);
-    border-radius: 14px;
-    padding: 12px 8px 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,.12);
-    font-size: 12px;
-  }
+.card {
+  position: relative;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 12px 8px 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,.12);
+  font-size: 12px;
+}
 
-  .card.captain-card {
-    border: 2px solid #d32f2f;
-  }
+.card.captain-card {
+  border: 2px solid #d32f2f;
+}
 
-  .number {
-    position: absolute;
-    top: -6px;
-    left: -6px;
-    background: #1976d2;
-    color: white;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    font-weight: 700;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+.number {
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #1976d2;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
 
-  .captain {
-    position: absolute;
-    top: -14px;
-    right: -10px;
-    background: #d32f2f;
-    color: #fff;
-    font-size: 11px;
-    font-weight: 700;
-    padding: 4px 6px;
-    border-radius: 10px;
-  }
+.captain {
+  position: absolute;
+  top: -14px;
+  right: -10px;
+  background: #d32f2f;
+  color: #fff;
+  font-size: 11px;
+  padding: 4px 6px;
+  border-radius: 10px;
+}
 
-  .name {
-    text-align: center;
-    font-weight: 700;
-    font-size: 14px;
-  }
+.name {
+  text-align: center;
+  font-weight: 700;
+}
 
-  .nickname {
-    text-align: center;
-    font-size: 11px;
-    color: #666;
-    margin-bottom: 6px;
-    font-style: italic;
-  }
+.nickname {
+  text-align: center;
+  font-size: 11px;
+  color: #666;
+  margin-bottom: 6px;
+  font-style: italic;
+}
 
-  .row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 4px;
-  }
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
 
-  .control {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    height: 32px;
-  }
+.control {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+}
 
-  .control button {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    border: none;
-    background: #bbdefb;
-    font-size: 16px;
-    cursor: pointer;
-  }
+.control button {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: #bbdefb;
+  font-size: 16px;
+  cursor: pointer;
+}
 
-  .value {
-    width: 22px;
-    text-align: center;
-    font-size: 14px;
-    line-height: 32px;
-  }
+.value {
+  width: 22px;
+  text-align: center;
+  font-size: 14px;
+  line-height: 32px;
+}
 
-  .total {
-    margin-top: 6px;
-    text-align: center;
-    background: #fff3cd;
-    border-radius: 10px;
-    font-size: 15px;
-    font-weight: bold;
-    padding: 6px;
-  }
+.total {
+  margin-top: 6px;
+  background: #fff3cd;
+  border-radius: 10px;
+  padding: 6px;
+  text-align: center;
+  font-weight: bold;
+}
 
-  /* 全壘打動畫 */
-  #homerun {
-    position: fixed;
-    inset: 0;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0,0,0,.5);
-    z-index: 998;
-    pointer-events: none;
-  }
-  #homerun.show { display: flex; }
-  #homerun span {
-    font-size: 40px;
-    font-weight: 900;
-    color: #ffeb3b;
-    animation: pop .8s ease;
-  }
+/* === 動畫 Overlay === */
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  text-align: center;
+  font-weight: 900;
+  color: #ffeb3b;
+}
 
-  /* Aaron 彩蛋 */
-  #egg {
-    position: fixed;
-    inset: 0;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0,0,0,.6);
-    z-index: 999;
-    font-size: 26px;
-    font-weight: 900;
-    color: #ffeb3b;
-    text-align: center;
-  }
-  #egg.show { display: flex; animation: pop 1.2s ease; }
+#homerun {
+  background: rgba(0,0,0,.5);
+  font-size: 40px;
+}
 
-  @keyframes pop {
-    0% { transform: scale(.5); opacity: 0; }
-    60% { transform: scale(1.3); opacity: 1; }
-    100% { transform: scale(1); }
-  }
+#egg {
+  background: rgba(0,0,0,.65);
+  font-size: 26px;
+}
+
+/* === 動畫定義 === */
+@keyframes pop {
+  0%   { transform: scale(.5); opacity: 0; }
+  60%  { transform: scale(1.3); opacity: 1; }
+  100% { transform: scale(1); }
+}
 </style>
 </head>
 
@@ -170,109 +155,132 @@
 <h1>RAN Team全員都開轟! 棒棒擊沉NPO!</h1>
 <div class="grid" id="grid"></div>
 
-<div id="homerun"><span>💥⚾ 全壘打！！ 🍺🔥</span></div>
-<div id="egg">🍻 鴛鴦雙飛<br>王大哥陪你喝 🍻<br>王大哥承擔兩杯酒</div>
+<div id="homerun" class="overlay">💥⚾ 全壘打！！ 🍺🔥</div>
+<div id="egg" class="overlay">🍻 鴛鴦雙飛<br>王大哥陪你喝 🍻</div>
 
 <script>
+/* ===== 球員 ===== */
 const players = [
-  { name: "Aaron", number: 31, nickname: "幹話王" },
-  { name: "FuShiung", number: 17, nickname: "雄董" },
-  { name: "Kevin", number: 21, nickname: "黃領導" },
-  { name: "Charlie", number: 6, nickname: "查哥" },
-  { name: "Ray H", number: 90, nickname: "小鑫鑫" },
-  { name: "Ray C", number: 20, nickname: "黃金游擊" },
-  { name: "Kelvin", number: 88, nickname: "攝影大哥" },
-  { name: "Wallace", number: 15, nickname: "瓦哥" },
-  { name: "Ben", number: 9, nickname: "年輕人" },
-  { name: "Denny", number: 2, nickname: "王大哥" },
-  { name: "Wesley", number: 87, nickname: "衛斯理" },
-  { name: "Benson", number: 86, nickname: "班森" }
+  { name:"Aaron",   number:31, nickname:"幹話王" },
+  { name:"FuShiung",number:17, nickname:"雄董" },
+  { name:"Kevin",   number:21, nickname:"黃領導" },
+  { name:"Charlie", number:6,  nickname:"查哥" },
+  { name:"Ray H",   number:90, nickname:"小鑫鑫" },
+  { name:"Ray C",   number:20, nickname:"黃金游擊" },
+  { name:"Kelvin",  number:88, nickname:"攝影王" },
+  { name:"Wallace", number:15, nickname:"瓦哥" },
+  { name:"Ben",     number:9,  nickname:"年輕人" },
+  { name:"Denny",   number:2,  nickname:"王大哥" },
+  { name:"Wesley",  number:87, nickname:"衛斯理" },
+  { name:"Benson",  number:86, nickname:"班森" }
 ];
 
+/* ===== 事件 ===== */
 const events = [
-  { name: "一球出局", type: "self", value: 3 },
-  { name: "兩球三振", type: "self", value: 3 },
-  { name: "失誤", type: "self-error", value: 1 },
-  { name: "保送", type: "aaron", value: 1 },
-  { name: "一安", type: "aaron", value: 1 },
-  { name: "二安", type: "aaron", value: 2 },
-  { name: "三安", type: "aaron", value: 3 },
-  { name: "全壘", type: "aaron", value: 4 },
-  { name: "打點", type: "aaron", value: 1 }
+  { name:"一球出局", type:"self",       value:3 },
+  { name:"兩球三振", type:"self",       value:3 },
+  { name:"失誤",     type:"self-error", value:1 },
+  { name:"保送",     type:"aaron",      value:1 },
+  { name:"一安",     type:"aaron",      value:1 },
+  { name:"二安",     type:"aaron",      value:2 },
+  { name:"三安",     type:"aaron",      value:3 },
+  { name:"全壘",     type:"aaron",      value:4 },
+  { name:"打點",     type:"aaron",      value:1 }
 ];
 
 const grid = document.getElementById("grid");
-const hr = document.getElementById("homerun");
+const hr  = document.getElementById("homerun");
 const egg = document.getElementById("egg");
 const bonus = {};
 
-players.forEach((p, pi) => {
-  const card = document.createElement("div");
-  card.className = p.name === "Aaron" ? "card captain-card" : "card";
+/* ===== 建卡片 ===== */
+players.forEach((p,pi)=>{
+  const card=document.createElement("div");
+  card.className=p.name==="Aaron"?"card captain-card":"card";
 
-  const rows = events.map((e, ei) => `
-    <div class="row">
-      <div>${e.name}</div>
-      <div class="control">
-        <button onclick="chg(${pi},${ei},-1)">➖</button>
-        <div class="value" id="v-${pi}-${ei}">0</div>
-        <button onclick="chg(${pi},${ei},1)">➕</button>
-      </div>
-    </div>
-  `).join("");
-
-  card.innerHTML = `
+  card.innerHTML=`
     <div class="number">#${p.number}</div>
     ${p.name==="Aaron"?'<div class="captain">👑 隊長</div>':''}
     <div class="name">${p.name}</div>
     <div class="nickname">「${p.nickname}」</div>
-    ${rows}
+
+    ${events.map((e,ei)=>`
+      <div class="row">
+        <div>${e.name}</div>
+        <div class="control">
+          <button onclick="chg(${pi},${ei},-1)">➖</button>
+          <div class="value" id="v-${pi}-${ei}">0</div>
+          <button onclick="chg(${pi},${ei},1)">➕</button>
+        </div>
+      </div>
+    `).join("")}
+
     <div class="total" id="t-${pi}">🍺 0 杯</div>
   `;
-
   grid.appendChild(card);
 });
 
-function showHR(){
-  hr.classList.add("show");
-  setTimeout(()=>hr.classList.remove("show"),800);
-}
-function showEgg(){
-  egg.classList.add("show");
-  setTimeout(()=>egg.classList.remove("show"),1200);
+/* ===== 穩定動畫播放 ===== */
+function playOverlay(el, duration){
+  el.style.display = "flex";
+  el.style.animation = "none";   // reset
+  el.offsetHeight;               // 強制 reflow
+  el.style.animation = "pop 1.8s ease"; // ✅ 動畫時長 1.8 秒
+
+  setTimeout(()=>{
+    el.style.display = "none";
+  }, duration);
 }
 
-function chg(pi, ei, d){
-  const el = document.getElementById(`v-${pi}-${ei}`);
-  const cur = Number(el.textContent);
-  const next = Math.max(0,cur+d);
-  const inc = d===1 && next>cur;
+/* ===== 加減 ===== */
+function chg(pi,ei,d){
+  const vEl=document.getElementById(`v-${pi}-${ei}`);
+  const cur=Number(vEl.textContent);
+  const next=Math.max(0,cur+d);
+  const inc=(d===1 && next>cur);
 
   if(events[ei].name==="全壘" && inc){
-    showHR();
+    playOverlay(hr, 1800); // ✅ 全壘動畫 1.8 秒
+
     if(players[pi].name==="Aaron"){
-      showEgg();
-      bonus.Aaron=(bonus.Aaron||0)-2;
-      bonus.Denny=(bonus.Denny||0)+2;
+      playOverlay(egg, 2200); // ✅ 彩蛋動畫 2.2 秒
+      bonus.Aaron = (bonus.Aaron||0) - 2;
+      bonus.Denny = (bonus.Denny||0) + 2;
     }
   }
-  el.textContent=next;
+
+  vEl.textContent = next;
   calc();
 }
 
+/* ===== 核心計算 ===== */
 function calc(){
-  let aaronExtra=0;
+  let aaronExtra = 0;
+
+  // 全隊對 Aaron 的事件
+  players.forEach((_,pi)=>{
+    events.forEach((e,ei)=>{
+      if(e.type==="aaron"){
+        const v=Number(document.getElementById(`v-${pi}-${ei}`).textContent);
+        aaronExtra += v * e.value;
+      }
+    });
+  });
+
+  // 各自杯數
   players.forEach((p,pi)=>{
-    let self=0;
+    let self = 0;
+
     events.forEach((e,ei)=>{
       const v=Number(document.getElementById(`v-${pi}-${ei}`).textContent);
-      if(e.type==="aaron") aaronExtra+=v*e.value;
-      if(e.type==="self") self+=v*e.value;
-      if(e.type==="self-error") self+=Math.max(0,v-2);
+      if(e.type==="self") self += v * e.value;
+      if(e.type==="self-error") self += Math.max(0, v - 2) * e.value;
     });
-    let total=p.name==="Aaron"?self+aaronExtra:self;
-    total+=(bonus[p.name]||0);
-    document.getElementById(`t-${pi}`).textContent=`🍺 ${total} 杯`;
+
+    let total = (p.name==="Aaron") ? self + aaronExtra : self;
+    total += (bonus[p.name] || 0);
+
+    document.getElementById(`t-${pi}`).textContent = `🍺 ${total} 杯`;
   });
 }
 </script>
